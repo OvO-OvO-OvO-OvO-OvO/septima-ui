@@ -1,5 +1,5 @@
 /* septima-ui v2 — 셉티마 상태창·배틀창. <StatusWindow …/> <BattleField …/> 태그 글을 읽어 화면을 그린다.
-   그림: septima-assets 저장소 (card/C###.webp, mon/M###.webp, place/P###.webp, c/{인물}/1.webp). 그림이 없으면 글만 그린다. */
+   그림: septima-assets 저장소 (card/C###.webp, mon/M###.webp, place/P###.webp, c/{인물}_{상황}.webp). 그림이 없으면 글만 그린다. */
 (function () {
   "use strict";
 
@@ -44,7 +44,7 @@
   function cardArt(name) { var c = lookup("cards", name); return c ? "card/" + c + ".webp" : null; }
   function monArt(name) { var c = lookup("monsters", name); return c ? "mon/" + c + ".webp" : null; }
   function placeArt(name) { var c = lookup("places", name); return c ? "place/" + c + ".webp" : null; }
-  function face(name) { var s = lookup("people", name); return s ? "c/" + s + "/1.webp" : null; }
+  function face(name) { var s = lookup("people", name); return s ? "c/" + s + "_1.webp" : null; }
 
   /* ---------- 태그 읽기 ---------- */
   var ATTR = /([A-Za-z_][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{([^}]*)\})/g;
