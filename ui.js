@@ -46,6 +46,35 @@
   function placeArt(name) { var c = lookup("places", name); return c ? "place/" + c + ".webp" : null; }
   function face(name) { var s = lookup("people", name); return s ? "c/" + s + "_1.webp" : null; }
 
+  /* 속성 아이콘: 24칸 SVG, 속성 색으로 채운다 */
+  var ATTRP = {
+    "화": "M12 2c1 4 6 6.5 6 12a6 6 0 0 1-12 0c0-3 1.6-4.8 3-6 .2 2 1 3.2 2.2 3.8C11 9 10.6 5.6 12 2z",
+    "수": "M12 2.5C9 7 5.5 10.6 5.5 14.5a6.5 6.5 0 0 0 13 0C18.5 10.6 15 7 12 2.5z",
+    "풍": "M3 8.5h11a3 3 0 1 0-3-3M3 12.5h15a3 3 0 1 1-3 3M3 16.5h7",
+    "지": "M2 20 9 7l4 6 2.5-3.5L22 20z",
+    "광": "M12 7.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zM12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1",
+    "암": "M15.5 3a9 9 0 1 0 5.5 13.6A7.5 7.5 0 0 1 15.5 3z",
+    "무": "M12 4.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15z"
+  };
+  var ATTRLINE = { "풍": 1, "광": 1, "무": 1 };
+  function attrIcon(attr, size) {
+    var d = ATTRP[attr];
+    if (!d) return null;
+    var ns = "http://www.w3.org/2000/svg", c = ATTRC[attr];
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("width", size); svg.setAttribute("height", size);
+    svg.style.flexShrink = "0"; svg.style.verticalAlign = "-2px";
+    var p = document.createElementNS(ns, "path");
+    p.setAttribute("d", d);
+    if (ATTRLINE[attr]) {
+      p.setAttribute("fill", attr === "광" ? c : "none");
+      p.setAttribute("stroke", c); p.setAttribute("stroke-width", "2"); p.setAttribute("stroke-linecap", "round");
+    } else p.setAttribute("fill", c);
+    svg.appendChild(p);
+    return svg;
+  }
+
   /* ---------- 태그 읽기 ---------- */
   var ATTR = /([A-Za-z_][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{([^}]*)\})/g;
   function parseAttrs(s) {
@@ -120,8 +149,9 @@
       background: ready ? C.panel : "rgba(240,181,74,0.08)", overflow: "hidden"
     }, [
       h("summary", { cursor: "pointer", listStyle: "none", padding: "6px 8px", display: "flex", gap: "8px", alignItems: "center", outline: "none" }, [
-        h("div", { width: "34px", height: "34px", borderRadius: "6px", flexShrink: "0", background: ac + "33", overflow: "hidden" }, [
-          img(cardArt(name), { width: "100%", height: "100%", objectFit: "cover" })
+        h("div", { position: "relative", width: "40px", height: "40px", borderRadius: "6px", flexShrink: "0", background: ac + "33", overflow: "hidden" }, [
+          img(cardArt(name), { width: "100%", height: "100%", objectFit: "cover" }),
+          h("div", { position: "absolute", right: "1px", bottom: "1px", width: "15px", height: "15px", borderRadius: "50%", background: "rgba(14,14,20,.85)", display: "flex", alignItems: "center", justifyContent: "center" }, [attrIcon(attr, 11)])
         ]),
         h("div", { flex: "1", minWidth: "0" }, [
           h("div", { display: "flex", justifyContent: "space-between", gap: "6px" }, [
@@ -129,7 +159,7 @@
             h("span", { fontSize: "11px", color: gc, fontWeight: "700", flexShrink: "0" }, [grade])
           ]),
           h("div", { fontSize: "11px", color: C.muted }, [
-            h("span", { color: ac }, [attr]), " · " + stat + " · ",
+            attrIcon(attr, 12), h("span", { color: ac, marginLeft: "3px" }, [attr]), " · " + stat + " · ",
             h("span", { color: ready ? C.ok : C.cool }, [ready ? "사용 가능" : state])
           ])
         ])
